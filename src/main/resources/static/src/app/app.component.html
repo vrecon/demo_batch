@@ -1,9 +1,9 @@
-<p-card *ngIf="searchForm">
+<p-card>
   <p-header>
     <h1>Batch Search</h1>
   </p-header>
   <form [formGroup]="searchForm">
-    <p-table [value]="searchLines" [columns]="cols">
+    <p-table [value]="searchLines.controls" [columns]="cols">
       <ng-template pTemplate="header">
         <tr>
           <th>Field</th>
@@ -13,7 +13,7 @@
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-searchLine>
-        <tr>
+        <tr [formGroupName]="searchLine.index">
           <td>
             <p-dropdown formControlName="field" [options]="fieldOptions"></p-dropdown>
           </td>
@@ -24,12 +24,12 @@
             <input type="text" formControlName="value">
           </td>
           <td>
-            <button pButton type="button" icon="pi pi-minus" (click)="removeSearchLine(searchLine)">Remove</button>
+            <button pButton type="button" icon="pi pi-minus" (click)="removeSearchLine(searchLine)"></button>
           </td>
         </tr>
       </ng-template>
     </p-table>
-    <button pButton type="button" icon="pi pi-plus" (click)="addSearchLine()">Add</button>
+    <button pButton type="button" icon="pi pi-plus" (click)="addSearchLine()"></button>
     <button pButton type="submit" [disabled]="searchForm.invalid">Search</button>
   </form>
 </p-card>

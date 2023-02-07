@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 
 @Component({
@@ -9,7 +9,7 @@ import { SelectItem } from 'primeng/api';
 })
 export class AppComponent implements OnInit {
   searchForm: FormGroup | undefined;
-  searchLines: FormGroup[] = [];
+  searchLines: FormArray | undefined;
   fieldOptions: SelectItem[];
   operatorOptions: SelectItem[];
   cols: any[];
@@ -31,30 +31,35 @@ export class AppComponent implements OnInit {
       { field: 'field', header: 'Field' },
       { field: 'operator', header: 'Operator' },
       { field: 'value', header: 'Value' },
-      { field: 'actions', header: '' },
     ];
   }
 
   ngOnInit() {
-    this.searchForm =this.formBuilder.group({});
-    this.addSearchLine();
+    this.searchForm = this.formBuilder.group({
+      searchLines: this.formBuilder.array([this.createSearchLine()])
+    });
+  }
+
+  createSearchLine(): FormGroup {
+    return this.formBuilder.group({
+      field: ['', Validators.required],
+      operator: ['', Validators.required],
+      value: ['', Validators.required]
+    });
   }
 
   addSearchLine() {
-    const newSearchLine = this.formBuilder.group({
-      field: ['', Validators.required],
-      operator: ['', Validators.required],
-      value: ['', Validators.required],
-    });
-    this.searchLines.push(newSearchLine);
-  //  this.searchForm?.addControl(searchLine${this.searchLines.length}, newSearchLine);
+    (this.searchForm?.get('searchLines') as FormArray).push(this.createSearchLine());
   }
 
-  removeSearchLine(searchLine: FormGroup) {
-    const index = this.searchLines.indexOf(searchLine);
-    this.searchLines.splice(index, 1);
-   // this.searchForm?.removeControl(this.searchLines(index-1));
+  removeSearchLine(index: number) {
+    (this.searchForm?.get('searchLines') as FormArray).removeAt(index);
   }
+
+  onSubmit() {
+    console.log(this.searchForm?.value);
+  }
+   
 
 }
 
