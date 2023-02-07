@@ -9,7 +9,7 @@ import { SelectItem } from 'primeng/api';
 })
 export class AppComponent implements OnInit {
   searchForm: FormGroup | undefined;
-  searchLines: FormArray | undefined;
+  searchLinesArray: FormArray | undefined;
   fieldOptions: SelectItem[];
   operatorOptions: SelectItem[];
   cols: any[];
@@ -31,35 +31,39 @@ export class AppComponent implements OnInit {
       { field: 'field', header: 'Field' },
       { field: 'operator', header: 'Operator' },
       { field: 'value', header: 'Value' },
+      { field: 'actions', header: '' },
     ];
   }
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({
-      searchLines: this.formBuilder.array([this.createSearchLine()])
+      searchLines: this.formBuilder.array([])
     });
+    this.addSearchLine();
   }
 
-  createSearchLine(): FormGroup {
-    return this.formBuilder.group({
-      field: ['', Validators.required],
-      operator: ['', Validators.required],
-      value: ['', Validators.required]
-    });
+  get searchLineArray() {
+    return this.searchForm?.get('searchLines') as FormArray;
   }
 
   addSearchLine() {
-    (this.searchForm?.get('searchLines') as FormArray).push(this.createSearchLine());
+    const searchLine = this.formBuilder.group({
+      field: ['', Validators.required],
+      operator: ['', Validators.required],
+      value: ['', Validators.required],
+    });
+
+
+    this.searchLineArray?.push(searchLine);
   }
 
   removeSearchLine(index: number) {
-    (this.searchForm?.get('searchLines') as FormArray).removeAt(index);
+    this.searchLineArray?.removeAt(index);
   }
 
-  onSubmit() {
+  submitSearch() {
     console.log(this.searchForm?.value);
   }
-   
 
 }
 
